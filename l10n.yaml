@@ -1,0 +1,5 @@
+# 该文件用于配置本地化工具
+
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
