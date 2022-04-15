@@ -1,15 +1,34 @@
+import 'dart:convert';
+
 class LoginModel {
   final int id;
   final String avatar;
   final String account;
   final String authPhone;
   final int status;
-  final int oauthEmail;
+  final String oauthEmail;
   final int isEmail;
   final String createOs;
   final String lastIp;
   final String score;
   final String token;
+
+  @override
+  String toString() {
+    return jsonEncode({
+      'id': id,
+      'avatar': avatar,
+      'account': account,
+      'authPhone': authPhone,
+      'status': status,
+      'oauthEmail': oauthEmail,
+      'isEmail': isEmail,
+      'createOs': createOs,
+      'lastIp': lastIp,
+      'score': score,
+      'token': token,
+    });
+  }
 
   const LoginModel(
       {required this.id,

@@ -38,8 +38,7 @@ class BZTheme {
       color: BZColor.card,
       shadowColor: BZColor.nav,
       elevation: 1,
-      margin: EdgeInsets.fromLTRB(10, 16, 10, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
     ),
     textTheme: const TextTheme(
       headline1: TextStyle(
@@ -165,8 +164,7 @@ class BZTheme {
       color: BZColor.darkCard,
       shadowColor: BZColor.darkNav,
       elevation: 4,
-      margin: EdgeInsets.fromLTRB(10, 16, 10, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
     ),
     textTheme: const TextTheme(
       headline1: TextStyle(

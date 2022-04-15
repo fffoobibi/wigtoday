@@ -76,7 +76,10 @@
   "favorites": "Favorites",
   "save": "SAVE",
   "priceRange": "Price Range",
-  "detail": "Commodity Detail",
+  "commodityDetail": "Commodity Detail",
+  "buyerShowDetail": "Buyer show detail",
+  "socialAccount": "SOCIAL ACCOUNT",
+  "shopNow": "SHOP NOW",
 
   "recentSearch": "Recent Search",
   "discovery": "Discovery",
@@ -104,6 +107,9 @@
   "settingsSecurityPageChangePwd": "Change Password",
   "settingsSecurityPageEmail": "Security E-Mail",
   "settingsSecurityPageQuestion": "Security Question",
+  "settingsSecurityPwdTips": "Change your password regularly to increase your account's protection.",
+  "settingsSecurityEmailTips":"Please reset the password by verification via email if the password is forgotten or the account is stolen.",
+  "settingsSecurityQuestionTips": "Please retrieve the password by security question if the password is forgotten or the account is stolen. ",
   
   "inputTipsSafety": "Safety Tips",
   "inputTipsAnswer": "Answer",
@@ -129,6 +135,7 @@
   "btnTextSign": "SIGN",
   "btnTextLogin": "LOGIN",
   "btnTextSave": "SAVE",
+  "btnTextRegister": "REGISTER",
 
   "titleMesage": "Message",
   "titleSettings": "Settings",
@@ -149,6 +156,9 @@
   "titleBalance":"Balance",
   
   "feedBackEmptyMessage": "Message list is Empty!",
+  "feedBackVerificationCodeHasSent": "A verification code has been sent to your E-mail!",
+  "feedBackResetPasswdOk": "Congratulations on your password reset success!",
+  "feedBackVerificationCodeOk": "Your Email address successfully verified and now you are a member of kinsmarket.",
 
   "capSign": "SIGN IN",
   "capRegister": "REGISTER",
@@ -159,6 +169,17 @@
   "textIncorrect": "Incorrect email or password",
   "textLogin": "Login via social account.",
   "textSelectPicture": "Select Picture",
-  "textCancel": "Cancel"
+  "textCancel": "Cancel",
+  "textMale": "Male",
+  "textFemale": "Female",
+  "textEmailTips": "If this email address is not your own or invalid, Please register again with a valid email address.",
+
+  "hintFirstName": "type first name",
+  "hintLastName":"type last name",
+  "hintEmail":"type email",
+  "hintPwd": "type password, the password contains 6 to 16 characters",
+  "hintConfirmPwd": "confirm password",
+  "hintTypePwd": "type password"
+
 
 }

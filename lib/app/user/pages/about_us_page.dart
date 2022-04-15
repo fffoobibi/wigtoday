@@ -15,30 +15,34 @@ class _AboutUsPageState extends State<AboutUsPage> with Components {
   final double padding = 12;
   bool loading = true;
   int current = 0;
-  final popItems = <String>['Cooperation', 'About us'];
-  final apiNames = <String>['termsService', 'aboutUs'];
-  final htmlResults = <String>['', ''];
+  String dropDownValue = 'Cooperation';
+  final popItems = <String>['Cooperation', 'About us', 'Privacy', 'UserSafety'];
+  final apiNames = <String>['termsService', 'aboutUs', 'privacy', 'userSafety'];
+  final htmlResults = <String>['', '', '', ''];
 
   @override
   void initState() {
     super.initState();
-    request_(0);
+    request_(dropDownValue);
   }
 
-  void request_(int index) {
+  void request_(String value) {
+    var index = popItems.indexOf(value);
     String url = '/page?name=${apiNames[index]}';
     if (htmlResults[index] == '') {
-      post(url, callBack: (data) {
+      post(url).then((ret) {
         setState(() {
+          dropDownValue = value;
           loading = false;
           current = index;
-          htmlResults[current] = data['data'];
+          htmlResults[current] = ret['data'];
         });
-      });
+      }).catchError((e){});
     } else {
       setState(() {
         loading = false;
         current = index;
+        dropDownValue = value;
       });
     }
   }
@@ -82,15 +86,15 @@ class _AboutUsPageState extends State<AboutUsPage> with Components {
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(10)),
                           child: DropdownButtonHideUnderline(
-                              child: DropdownButton<int>(
-                                  value: 0,
+                              child: DropdownButton<String>(
+                                  value: dropDownValue,
                                   onChanged: (value) {
                                     request_(value!);
                                   },
                                   items: List.generate(
                                       popItems.length,
                                       (index) => DropdownMenuItem(
-                                          value: index,
+                                          value: popItems[index],
                                           child: Text(popItems[index],
                                               style: createTextStyle(
                                                   ctx: context, size: 15)))))))

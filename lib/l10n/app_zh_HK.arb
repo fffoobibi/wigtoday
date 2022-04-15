@@ -76,7 +76,10 @@
   "favorites": "我的收藏",
   "save": "保存",
   "priceRange": "價格範圍",
-  "detail": "商品詳情",
+  "commodityDetail": "商品詳情",
+  "buyerShowDetail": "買家秀詳情",
+  "socialAccount": "社交賬號",
+  "shopNow": "去購物",
 
   "announcement": "公告",
   "termsOfService": "服務條款",
@@ -104,6 +107,9 @@
   "settingsSecurityPageChangePwd": "跟改密碼",
   "settingsSecurityPageEmail": "郵箱驗證",
   "settingsSecurityPageQuestion": "安全問題",
+  "settingsSecurityPwdTips": "定期更改密碼，以增加您的帳戶的保護。",
+  "settingsSecurityEmailTips":"如果忘記密碼或帳戶被盜，請通過郵件驗證重置密碼。",
+  "settingsSecurityQuestionTips": "如果密碼忘記或帳戶被盜，請通過安全問題找回密碼。",
 
   "inputTipsSafety": "安全提示",
   "inputTipsAnswer": "回答",
@@ -128,6 +134,7 @@
   "btnTextSign": "登錄",
   "btnTextLogin": "登錄",
   "btnTextSave": "保存",
+  "btnTextRegister": "註冊",
 
   "titleMesage": "消息",
   "titleSettings": "設置",
@@ -147,6 +154,9 @@
   "titleBalance":"餘額",
 
   "feedBackEmptyMessage": "暫無消息",
+  "feedBackVerificationCodeHasSent": "驗證碼已發送到您的郵箱!",
+  "feedBackResetPasswdOk": "密碼修改成功!",
+  "feedBackVerificationCodeOk": "您的電子郵件地址成功驗證，現在您是kinsmarket的用戶。",
 
   "capSign": "登錄",
   "capRegister": "註冊",
@@ -157,6 +167,18 @@
   "textIncorrect": "電子郵件或密碼錯誤",
   "textLogin": "通過社交賬號登錄",
   "textSelectPicture": "選擇圖片",
-  "textCancel": "取消"
+  "textCancel": "取消",
+  "textMale": "男性",
+  "textFemale": "女性",
+  "textEmailTips": "如果這個電子郵件地址不是你自己的或無效的，請重新註冊一個有效的電子郵件地址。",
+
+
+  "hintFirstName": "輸入名字",
+  "hintLastName":"輸入姓氏",
+  "hintEmail":"輸入郵箱",
+  "hintPwd": "輸入密碼, 密碼長度6到16位",
+  "hintConfirmPwd": "確認密碼",
+  "hintTypePwd": "輸入密碼"
+
 
 }

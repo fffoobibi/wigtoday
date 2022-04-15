@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:wigtoday_app/utils/color.dart';
 
 class BZButton extends StatelessWidget {
   final Widget child;
@@ -118,6 +120,7 @@ class BZTextButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (leftIcon != null) Icon(leftIcon, size: iconSize ?? (fontSize + 4), color: foregroundColor),
+          if (leftIcon != null) const SizedBox(width: 3),
           Text(
             text,
             style: TextStyle(
@@ -126,9 +129,141 @@ class BZTextButton extends StatelessWidget {
               color: style?.color ?? foregroundColor,
             ),
           ),
+          if (rightIcon != null) const SizedBox(width: 3),
           if (rightIcon != null) Icon(rightIcon, size: iconSize ?? (fontSize + 4), color: foregroundColor),
         ],
       ),
     );
+  }
+}
+
+
+// ignore: must_be_immutable
+class BZLoadingButton extends StatefulWidget {
+  BZLoadingButton(
+      {Key? key,
+      this.loadingColor,
+      this.loadingSize,
+      this.loadingBuilder,
+      required this.title,
+      required this.onTap,
+      required this.isLoading,
+      required this.radius,
+      required this.width,
+      required this.hPadding,
+      required this.useDebounce})
+      : super(key: key);
+
+  String title;
+  bool isLoading = false;
+  double radius = 10;
+  double? width;
+  double hPadding = 40;
+  bool useDebounce = false;
+
+  Future<bool> Function() onTap;
+  Widget Function(BuildContext context)? loadingBuilder;
+  Color? loadingColor;
+  double? loadingSize;
+
+  @override
+  // ignore: no_logic_in_create_state
+  State<BZLoadingButton> createState() => _BZLoadingButtonState(
+      loadingBuilder: loadingBuilder,
+      loadingColor: loadingColor,
+      loadingSize: loadingSize,
+      onTap: onTap,
+      title: title,
+      isLoading: isLoading,
+      radius: radius,
+      width: width,
+      hPadding: hPadding,
+      useDebounce: useDebounce);
+}
+
+class _BZLoadingButtonState extends State<BZLoadingButton> {
+  String title;
+  bool isLoading = false;
+  double radius = 10;
+  double? width;
+  double hPadding = 40;
+  bool useDebounce = false;
+  Future<bool> Function() onTap;
+
+  Widget Function(BuildContext context)? loadingBuilder;
+  Color? loadingColor;
+  double? loadingSize;
+
+  _BZLoadingButtonState(
+      {this.loadingBuilder,
+      this.loadingColor,
+      this.loadingSize,
+      required this.onTap,
+      required this.title,
+      required this.isLoading,
+      required this.radius,
+      required this.width,
+      required this.hPadding,
+      required this.useDebounce});
+
+  @override
+  Widget build(BuildContext context) {
+    return _createButton();
+  }
+
+  Widget? _createLoading() {
+    if (isLoading) {
+      return loadingBuilder != null
+          ? loadingBuilder!(context)
+          : SpinKitDualRing(
+              lineWidth: 4,
+              color: loadingColor ?? Colors.grey, //Theme.of(context).primaryColor,
+              size: loadingSize ?? 30,
+            );
+    }
+    return null;
+  }
+
+  Widget _createButton() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: hPadding),
+        child: Container(
+            height: 45,
+            width: width ?? 500,
+            decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    colors: [BZColor.gradStart, BZColor.gradEnd]),
+                borderRadius: BorderRadius.circular(radius)),
+            child: Stack(
+              children: [
+                InkWell(
+                    borderRadius: BorderRadius.circular(radius),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(isLoading? '': title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    onTap: () {
+                      if (isLoading == false) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        onTap().then((value) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }).catchError((e) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        });
+                      }
+                    }),
+                Align(alignment: Alignment.center, child: _createLoading())
+              ],
+            )));
   }
 }

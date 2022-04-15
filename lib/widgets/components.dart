@@ -1,68 +1,121 @@
-
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:dio/dio.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:wigtoday_app/app/user/models/user_profile.dart';
 import 'package:wigtoday_app/utils/color.dart';
 import 'package:wigtoday_app/utils/font.dart';
+import 'package:wigtoday_app/utils/http.dart';
 import 'package:wigtoday_app/utils/size.dart';
-import 'package:dio/dio.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:wigtoday_app/widgets/button.dart';
 import 'package:wigtoday_app/utils/theme.dart';
 
-typedef CallBack = Function(Map<String, dynamic> data);
-typedef ErrBack = Function(DioError error);
-
 mixin Components {
-  static Dio _dio = _createDio();
+  Widget getAvatar(
+      {required UserProFileModle model,
+      required BuildContext context,
+      required double height,
+      required double width}) {
+    if (model.avatar.isEmpty) {
+      return Icon(
+        Icons.person_rounded,
+        size: width,
+        color: const Color(0xffECECEC),
+      );
+    } else {
+      return Image.network(model.avatar,
+          fit: BoxFit.cover, height: height, width: width);
+    }
+  }
 
-  static Dio _createDio() {
-    var _dio = Dio();
-    // _dio.options.baseUrl = 'http://appapi.wigtoday.com/v1';
-    _dio.options.baseUrl = 'http://192.168.0.160:5000';
-    _dio.options.connectTimeout = 5000;
-    _dio.options.receiveTimeout = 3000;
-    _dio.options.responseType = ResponseType.json;
-    return _dio;
+  void showToast(
+      {required String msg,
+      ToastGravity gravity = ToastGravity.TOP,
+      BuildContext? ctx}) {
+    Color? bkg;
+    Color? fre;
+    if (ctx != null) {
+      bkg = isDark(ctx) ? BZColor.darkGrey : null;
+      fre = isDark(ctx) ? Colors.white : null;
+    }
+    Fluttertoast.showToast(
+        msg: msg, gravity: gravity, backgroundColor: bkg, textColor: fre);
   }
 
   AppLocalizations textLocation(BuildContext context) {
-    print('context ==> $context');
     return AppLocalizations.of(context)!;
   }
 
-  void get(String urlPath,
-      {Options? options, CallBack? callBack, ErrBack? errBack}) async {
-    try {
-      final response = await _dio.get(urlPath, options: options);
-      print(' =====>, ${response.data}, ${response.data.runtimeType}');
-      // Map<String, dynamic> res = jsonDecode(response.data) as Map<String, dynamic>;
-      if (callBack != null) {
-        callBack(response.data);
-      }
-    } catch (e) {
-      print('get error ===>: $e, $urlPath');
-      if (errBack != null) {
-        errBack(e as DioError);
-      }
-    }
+  Future<Map<String, dynamic>> get(String urlPath,
+      {Map<String, dynamic>? headers, Options? options}) async {
+    return HttpUtil.get(urlPath, headers: headers, options: options);
   }
 
-  void post(String urlPath,
+  Future<Map<String, dynamic>> post(String urlPath,
       {Map<String, dynamic>? data,
-      Options? options,
-      CallBack? callBack,
-      ErrBack? errBack}) async {
-    try {
-      final response = await _dio.post(urlPath,
-          data: data != null ? FormData.fromMap(data) : null, options: options);
-      // Map<String, dynamic> res = jsonDecode(response.data) as Map<String, dynamic>;
-      if (callBack != null) {
-        callBack(response.data);
-      }
-    } catch (e) {
-      if (errBack != null) {
-        errBack(e as DioError);
-      }
-    }
+      Map<String, dynamic>? headers,
+      FormData? fdata,
+      Options? options}) async {
+    return HttpUtil.post(urlPath,
+        data: data, fdata: fdata, headers: headers, options: options);
+  }
+
+  Widget netWorkImage(
+    String url,
+    Widget errWidget, {
+    double? width,
+    double? height,
+    BoxFit? fit,
+    Widget? loading,
+  }) {
+    return FutureBuilder(
+        future: get(url),
+        builder: ((context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return errWidget;
+            }
+            return CachedNetworkImage(
+              imageUrl: url,
+              width: width,
+              height: height,
+              fit: fit,
+            );
+          } else {
+            return loading ??
+                SizedBox(
+                    child: const CircularProgressIndicator(),
+                    width: width,
+                    height: height);
+          }
+        }));
+    // CachedNetworkImage(
+    //     imageUrl: url,
+    //     width: width,
+    //     height: height,
+    //     fit: fit,
+    //     placeholder: (ctx, _) => Text('loading'),
+    //     errorWidget: (_, __, ___) => const Icon(
+    //           Icons.error,
+    //           size: 40,
+    //         ));
+    // Image image = Image.network(url, width: width, height: height, fit: fit);
+    // final ImageStream stream = image.image.resolve(ImageConfiguration.empty);
+    // stream.addListener(
+    //   ImageStreamListener((_,__){},
+    //   onError: (excp, stace){
+    //       print("error  im iamge ====>");
+    //   }),
+    // );
+    // return image;
+  }
+
+  Map<String, dynamic> getTokenHeaders(UserProFileModle proFileModle) {
+    return {'Authorization': 'Beaer ${proFileModle.token}'};
   }
 
   bool isDark(BuildContext context) {
@@ -93,7 +146,7 @@ mixin Components {
     BuildContext? ctx,
     Color? light,
     Color? dark,
-    String family = 'SF Pro',
+    TextDecoration? decoration,
     double size = 22,
   }) {
     Color c;
@@ -105,36 +158,77 @@ mixin Components {
       c = color;
     }
     return TextStyle(
-        fontWeight: weight, color: c, fontFamily: family, fontSize: size);
+        fontWeight: weight, color: c, fontSize: size, decoration: decoration);
+  }
+
+  // 防抖
+  void Function()? debounce(
+    Function func, [
+    Duration delay = const Duration(milliseconds: 500),
+  ]) {
+    Timer? timer;
+    // ignore: prefer_function_declarations_over_variables
+    void Function()? target = () {
+      if (timer?.isActive ?? false) {
+        timer?.cancel();
+      }
+      timer = Timer(delay, () {
+        func.call();
+      });
+    };
+    return target;
   }
 
   Widget createButton(String title,
       {double radius = 10,
       VoidCallback? onTap,
       double? width,
-      double hPadding = 40}) {
+      double hPadding = 40,
+      bool useDebounce = false}) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: hPadding),
         child: Container(
             decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                    colors: [Color(0xffFE795A), Color(0xffFF1147)]),
+                    colors: [BZColor.gradStart, BZColor.gradEnd]),
                 borderRadius: BorderRadius.circular(radius)),
             child: InkWell(
-              borderRadius: BorderRadius.circular(radius),
-              child: Container(
-                width: width ?? 500,
-                height: 45,
-                alignment: Alignment.center,
-                child: Text(title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'SF Pro',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-              ),
-              onTap: onTap,
-            )));
+                borderRadius: BorderRadius.circular(radius),
+                child: Container(
+                  width: width ?? 500,
+                  height: 45,
+                  alignment: Alignment.center,
+                  child: Text(title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'SF Pro',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
+                ),
+                onTap: useDebounce
+                    ? (onTap != null ? debounce(onTap) : null)
+                    : onTap)));
+  }
+
+  Widget createLoadingButton(String title,
+      {required Future<bool> Function() onTap,
+      bool useDebounce = false, // not use
+      double hPadding = 40,
+      double? width,
+      Color? loadingColor,
+      double? loadingSize = 20,
+      Widget Function(BuildContext)? loadingBuilder}) {
+    return BZLoadingButton(
+        loadingColor: loadingColor,
+        loadingSize: loadingSize,
+        loadingBuilder: loadingBuilder,
+        isLoading: false,
+        radius: 10,
+        title: title,
+        onTap: onTap,
+        width: width,
+        hPadding: hPadding,
+        useDebounce: useDebounce);
   }
 
   Widget createButtonWithSplash(String title,
@@ -149,7 +243,7 @@ mixin Components {
             child: Ink(
                 decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                        colors: [Color(0xffFE795A), Color(0xffFF1147)]),
+                        colors: [BZColor.gradStart, BZColor.gradEnd]),
                     borderRadius: BorderRadius.circular(radius)),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(radius),
@@ -208,6 +302,7 @@ mixin Components {
   Widget createInputField(String title,
       {double spacing = 15,
       bool readOnly = false,
+      bool obscureText = false,
       ValueChanged<String>? setter,
       FormFieldValidator<String>? validator,
       VoidCallback? onTap,
@@ -259,6 +354,7 @@ mixin Components {
             width: width ?? BZSize.pageWidth / 3,
             child: inputField ??
                 TextFormField(
+                  obscureText: obscureText,
                   keyboardType: keyboardType,
                   controller: controller,
                   validator: validator,

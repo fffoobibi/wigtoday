@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:wigtoday_app/app/home/pages/review_list_page.dart';
 
 import 'package:wigtoday_app/utils/size.dart';
 import 'package:wigtoday_app/utils/font.dart';
@@ -76,6 +77,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         setState(() {
           _navOpacity = min(_controller.offset / 260, 1);
         });
+      } else if (_controller.offset > 270 && _navOpacity < 1) {
+        setState(() {
+          _navOpacity = 1;
+        });
       }
     });
     super.initState();
@@ -138,7 +143,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               const BackButton(),
               Text(
-                AppLocalizations.of(context)!.detail,
+                AppLocalizations.of(context)!.commodityDetail,
                 style: TextStyle(fontSize: BZFontSize.navTitle, color: titleColor),
               ),
               IconButton(
@@ -168,7 +173,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 child: Image.network(_slides[index], fit: BoxFit.cover, width: slideWidth, height: slideWidth,),
               );
             },
-            pagination: const SwiperPagination(margin: EdgeInsets.only(bottom: 40)),
+            pagination: const SwiperPagination(margin: EdgeInsets.only(bottom: 50)),
             autoplay: true,
             autoplayDelay: 5000,
             duration: 1000,
@@ -188,9 +193,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _countdownBox() {
     return Container(
       width: BZSize.pageWidth,
-      height: 34,
+      height: 40,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      color: const Color(0x88dd1333),
+      color: const Color(0x55000000),
       child: Row(
         children: [
           const Icon(Icons.flash_on, size: 18, color: Colors.white),
@@ -432,7 +437,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           children: [
             _reviewsHeader(),
             _reviewsBtns(),
-            Column(children: List.generate(_reviews.length, (index) => ReviewTile(review: _reviews[index]))),
+            ListView.separated(
+              padding: const EdgeInsets.all(0),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _reviews.length,
+              itemBuilder: (context, index) => ReviewTile(
+                review: _reviews[index],
+                onLike: (val) {},
+              ),
+              separatorBuilder: (context, index) => const Divider(height: 0),
+            ),
           ],
         ),
       ),
@@ -466,7 +481,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             foregroundColor: titleColor,
             rightIcon: Icons.arrow_right,
             padding: const EdgeInsets.all(8),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReviewListPage()),
+              );
+            },
           ),
         ],
       ),
@@ -632,5 +652,4 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       ),
     );
   }
-
 }

@@ -1,6 +1,7 @@
 import 'dart:math' show sqrt, pi;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wigtoday_app/app/home/pages/buyershow_list_page.dart';
 
 import 'package:wigtoday_app/utils/font.dart';
 import 'package:wigtoday_app/utils/size.dart';
@@ -473,7 +474,12 @@ class _HomePageState extends State<HomePage> {
             fontSize: BZFontSize.content,
             foregroundColor: titleColor,
             rightIcon: Icons.chevron_right,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BuyerShowListPage()),
+              );
+            },
           ),
         ],
       ),
